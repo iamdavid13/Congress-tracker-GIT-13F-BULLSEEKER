@@ -1,0 +1,391 @@
+/* ═══════════════════════════════════════════════════════════════
+   BullSeeker — Spotify-esque Congress Tracker
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: dark;
+  --bg:         #000000;
+  --surface:    #121212;
+  --surface-2:  #181818;
+  --surface-3:  #282828;
+  --sidebar:    #000000;
+  --border:     rgba(255,255,255,.06);
+  --ink:        #ffffff;
+  --muted:      #b3b3b3;
+  --muted-2:    #6a6a6a;
+  --accent:     #1DB954;
+  --accent-dim: rgba(29,185,84,.15);
+  --red:        #f15e6c;
+  --red-dim:    rgba(241,94,108,.15);
+  --blue:       #4d8eff;
+  --blue-dim:   rgba(77,142,255,.12);
+  --dem:        #3b82f6;
+  --rep:        #c0394f;
+  --radius:     10px;
+  --radius-lg:  16px;
+  --shadow:     0 8px 24px rgba(0,0,0,.5);
+  font-family: "Space Grotesk","Archivo","Inter",system-ui,sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body,#root{height:100%;background:var(--bg);color:var(--ink)}
+
+/* ─── Shell ─────────────────────────────────────────────────── */
+.shell{display:flex;height:100vh;overflow:hidden}
+
+/* ─── Sidebar ───────────────────────────────────────────────── */
+.sidebar{
+  width:230px;min-width:230px;
+  background:var(--sidebar);
+  display:flex;flex-direction:column;
+  padding:24px 12px 16px;
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+}
+.sidebar-brand{display:flex;align-items:center;gap:12px;padding:0 8px 28px}
+.brand-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px rgba(29,185,84,.7)}
+.brand-text{font-size:20px;font-weight:700;letter-spacing:-.02em}
+
+.nav-list{list-style:none;display:flex;flex-direction:column;gap:2px;flex:1}
+.nav-btn{
+  width:100%;border:none;background:transparent;color:var(--muted);
+  display:flex;align-items:center;gap:14px;
+  padding:11px 14px;border-radius:var(--radius);
+  font-size:14px;font-weight:500;cursor:pointer;
+  transition:all .15s ease;text-align:left;font-family:inherit;
+}
+.nav-btn:hover{background:var(--surface-2);color:var(--ink)}
+.nav-btn.active{background:var(--surface-3);color:var(--ink);font-weight:600}
+.nav-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.nav-label{white-space:nowrap}
+
+.sidebar-footer{padding:16px 14px 0;border-top:1px solid var(--border);margin-top:auto}
+.sidebar-footer p{font-size:12px;color:var(--muted-2)}
+
+/* ─── Content ───────────────────────────────────────────────── */
+.content{
+  flex:1;overflow-y:auto;padding:32px 40px 64px;
+  background:linear-gradient(180deg,#1a1a2e 0%,var(--bg) 360px);
+}
+
+/* ─── Page Layouts ──────────────────────────────────────────── */
+.page{max-width:1200px;margin:0 auto;animation:fadeUp .5s ease}
+.page-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.page-header h1{font-size:28px;font-weight:700}
+.page-header.center{text-align:center;flex-direction:column;align-items:center}
+.sub{color:var(--muted);font-size:14px;margin-top:4px;line-height:1.5}
+.accent-text{color:var(--accent)}
+
+.live-badge{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface-2);border:1px solid var(--border);
+  padding:8px 16px;border-radius:999px;font-size:13px;color:var(--muted);
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(29,185,84,.8);animation:pulse 1.6s infinite}
+
+/* ─── Stat Cards ────────────────────────────────────────────── */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px;display:flex;flex-direction:column;gap:6px;
+}
+.stat-card p{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.stat-card strong{font-size:26px;font-weight:700}
+.stat-card.accent strong{color:var(--accent)}
+.stat-card.sell strong{color:var(--red)}
+
+/* ─── Panels ────────────────────────────────────────────────── */
+.panel{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:24px;margin-bottom:20px;
+}
+.panel.full{width:100%}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.panel-head h2{font-size:18px;font-weight:600}
+
+/* ─── Two-column ────────────────────────────────────────────── */
+.two-col{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px}
+
+/* ─── Tables ────────────────────────────────────────────────── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{
+  text-align:left;padding:10px 12px;color:var(--muted);font-weight:500;
+  border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.06em;font-size:11px;
+  white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+tbody tr:hover{background:var(--surface-2)}
+tbody td{padding:12px;vertical-align:middle}
+.rank{color:var(--muted);font-size:16px;font-weight:600;width:40px}
+.mono{font-family:"Space Grotesk",monospace}
+.nw-table td,.nw-table th{white-space:nowrap}
+
+/* ─── Politician cell ───────────────────────────────────────── */
+.pol-cell{display:flex;align-items:center;gap:12px}
+.avatar{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.avatar.sm{width:30px;height:30px;font-size:10px}
+.avatar.dem{background:var(--dem)}
+.avatar.rep{background:var(--rep)}
+.pol-cell > div{display:flex;flex-direction:column;gap:1px}
+
+/* ─── Politician list (sidebar-style) ───────────────────────── */
+.pol-list{display:flex;flex-direction:column;gap:4px}
+.pol-row{
+  display:flex;align-items:center;gap:14px;
+  padding:10px 12px;border-radius:var(--radius);
+  transition:background .15s;cursor:pointer;
+}
+.pol-row:hover{background:var(--surface-2)}
+.pol-info{display:flex;flex-direction:column;flex:1;gap:1px}
+.pol-name{font-size:14px;font-weight:500}
+.trade-count{text-align:right;display:flex;flex-direction:column;gap:1px}
+.trade-count strong{font-size:15px}
+
+/* ─── Tags / Badges ─────────────────────────────────────────── */
+.type-badge{
+  display:inline-block;padding:3px 8px;border-radius:4px;
+  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;
+}
+.type-badge.buy{background:var(--accent-dim);color:var(--accent)}
+.type-badge.sell{background:var(--red-dim);color:var(--red)}
+.ticker{font-size:14px;font-weight:600;display:block;margin-bottom:2px}
+.ticker-link{font-size:14px;font-weight:600;color:var(--accent);display:block;margin-bottom:2px}
+.disclosure-icon{color:var(--muted);font-size:16px;cursor:pointer}
+.disclosure-icon:hover{color:var(--ink)}
+
+/* ─── Buttons ───────────────────────────────────────────────── */
+.btn-accent{
+  padding:10px 20px;border:none;border-radius:999px;
+  background:var(--accent);color:#000;font-weight:600;
+  font-size:13px;cursor:pointer;transition:all .2s;font-family:inherit;
+}
+.btn-accent:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(29,185,84,.3)}
+.btn-outline{
+  padding:8px 16px;border:1px solid var(--border);border-radius:999px;
+  background:transparent;color:var(--ink);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .15s;font-family:inherit;
+}
+.btn-outline:hover{background:var(--surface-3);border-color:var(--muted-2)}
+.btn-outline.sm{padding:5px 12px;font-size:12px}
+
+/* ─── Inputs ────────────────────────────────────────────────── */
+.search-input{
+  padding:10px 16px;border-radius:999px;
+  border:1px solid var(--border);background:var(--surface-2);
+  color:var(--ink);font-size:13px;min-width:180px;
+  transition:border .2s;font-family:inherit;
+}
+.search-input::placeholder{color:var(--muted-2)}
+.search-input:focus{outline:none;border-color:var(--accent)}
+.filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+
+/* ─── Trade Cards (Recent Trades page) ──────────────────────── */
+.trade-cards{display:flex;flex-direction:column;gap:8px}
+.trade-card{
+  display:grid;grid-template-columns:2fr 2fr 1.5fr 1fr;gap:16px;align-items:center;
+  padding:16px 20px;border-radius:var(--radius);
+  border-bottom:1px solid var(--border);
+  transition:background .15s;
+}
+.trade-card:hover{background:var(--surface-2)}
+.trade-card-left{display:flex;align-items:center;gap:14px}
+.ticker-box{
+  width:44px;height:44px;border-radius:var(--radius);
+  background:var(--surface-3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;
+}
+.ticker-box.neutral{background:var(--surface-3)}
+.trade-card-mid{display:flex;align-items:center}
+.trade-card-type{display:flex;flex-direction:column;gap:2px}
+.trade-card-dates{display:flex;flex-direction:column;gap:2px;text-align:right}
+
+/* ─── Government Spending ───────────────────────────────────── */
+.bar-chart{
+  display:flex;align-items:flex-end;gap:8px;
+  padding:16px 0 8px;height:260px;
+}
+.bar-item{display:flex;flex-direction:column;align-items:center;flex:1;gap:6px}
+.bar{border-radius:4px 4px 0 0;min-width:24px;transition:height .8s ease}
+.bar-label{font-size:10px;color:var(--muted);font-weight:600}
+
+.spending-cards{display:flex;flex-direction:column;gap:12px}
+.spending-card{
+  display:flex;align-items:flex-start;gap:16px;
+  padding:20px;border-radius:var(--radius-lg);
+  background:var(--surface-2);border:1px solid var(--border);
+  transition:transform .15s;
+}
+.spending-card:hover{transform:translateY(-2px)}
+.spending-card-icon{
+  width:44px;height:44px;border-radius:var(--radius);
+  background:var(--surface-3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--accent);flex-shrink:0;
+}
+.spending-card-body{flex:1;display:flex;flex-direction:column;gap:4px}
+.spending-headline{font-size:14px;line-height:1.4}
+.spending-amount{font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap}
+
+/* ─── Flow controls ─────────────────────────────────────────── */
+.flow-controls{display:flex;gap:10px;align-items:center}
+
+/* ─── Utility ───────────────────────────────────────────────── */
+.muted{color:var(--muted)}
+.small{font-size:12px;display:block}
+.green{color:var(--accent)}
+.red{color:var(--red)}
+
+/* ─── Source badges ─────────────────────────────────────────── */
+.source-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:999px;font-size:11px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;margin-top:6px;
+}
+.source-badge.live{background:var(--accent-dim);color:var(--accent)}
+.source-badge.static{background:var(--surface-3);color:var(--muted)}
+
+/* ─── Avatar images ─────────────────────────────────────────── */
+.avatar-img{
+  width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;
+}
+.pol-row .avatar-img + .avatar{display:none}
+
+/* ─── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted-2)}
+
+/* ─── Filter Controls ───────────────────────────────────────── */
+.filter-input{
+  flex:1;min-width:200px;padding:10px 16px;border-radius:var(--radius);
+  border:1px solid var(--border);background:var(--surface-2);
+  color:var(--ink);font-size:.88rem;font-family:inherit;
+}
+.filter-input::placeholder{color:var(--muted-2)}
+.filter-input:focus{outline:none;border-color:var(--accent)}
+.filter-select{
+  padding:10px 16px;border-radius:var(--radius);
+  border:1px solid var(--border);background:var(--surface-2);
+  color:var(--ink);font-size:.88rem;font-family:inherit;cursor:pointer;
+}
+.filter-select:focus{outline:none;border-color:var(--accent)}
+
+/* ─── Chamber & Bill Styles ─────────────────────────────────── */
+.chamber-badge{
+  display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;
+}
+.chamber-badge.senate{background:var(--blue-dim);color:var(--blue)}
+.chamber-badge.house{background:var(--accent-dim);color:var(--accent)}
+.bill-title{display:block;font-size:.85rem;line-height:1.35;color:var(--ink)}
+.sys-code{
+  font-family:"Space Mono",monospace;font-size:.75rem;
+  padding:2px 8px;border-radius:4px;background:var(--surface-3);color:var(--muted);
+}
+
+/* ─── Politician Modal ──────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;
+  animation:fadeIn .2s ease;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-container{
+  position:relative;width:92%;max-width:960px;max-height:88vh;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);overflow-y:auto;
+  box-shadow:0 32px 64px rgba(0,0,0,.6);
+  animation:slideUp .25s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{
+  position:sticky;top:12px;float:right;margin-right:16px;
+  width:36px;height:36px;border-radius:50%;border:none;
+  background:var(--surface-3);color:var(--ink);font-size:22px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  z-index:10;transition:background .15s;
+}
+.modal-close:hover{background:var(--surface-2)}
+.modal-header{
+  text-align:center;padding:40px 32px 20px;
+  background:linear-gradient(180deg,rgba(29,185,84,.06) 0%,transparent 100%);
+}
+.modal-avatar{
+  width:80px;height:80px;border-radius:50%;object-fit:cover;
+  margin-bottom:12px;border:2px solid var(--border);
+}
+.modal-name{font-size:32px;font-weight:700;margin:0}
+.modal-meta{color:var(--muted);font-size:14px;margin-top:6px}
+.modal-tabs{
+  display:flex;gap:0;border-bottom:1px solid var(--border);
+  padding:0 32px;
+}
+.modal-tab{
+  padding:14px 20px;border:none;background:transparent;
+  color:var(--muted);font-size:14px;font-weight:500;
+  cursor:pointer;transition:color .15s;font-family:inherit;
+  position:relative;
+}
+.modal-tab:hover{color:var(--ink)}
+.modal-tab.active{color:var(--ink);font-weight:600}
+.modal-tab.active::after{
+  content:"";position:absolute;bottom:-1px;left:0;right:0;
+  height:2px;background:var(--accent);border-radius:2px 2px 0 0;
+}
+.modal-bio{
+  padding:24px 32px;
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius);margin:20px 32px;
+  font-size:14px;line-height:1.65;color:var(--muted);
+}
+.modal-trades{padding:20px 24px}
+.modal-loading{padding:60px;text-align:center}
+
+/* Position performance badges */
+.position-return{
+  display:inline-block;padding:2px 8px;border-radius:4px;
+  font-size:12px;font-weight:600;white-space:nowrap;
+}
+.position-return.profit{background:var(--accent-dim);color:var(--accent)}
+.position-return.loss{background:var(--red-dim);color:var(--red)}
+.position-return-lg{
+  font-size:14px;font-weight:700;
+}
+.position-return-lg.profit{color:var(--accent)}
+.position-return-lg.loss{color:var(--red)}
+.position-summary{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:12px;margin-bottom:20px;
+}
+
+/* Clickable politician name */
+.pol-name-link{
+  color:var(--accent);cursor:pointer;transition:opacity .15s;
+  font-weight:500;border:none;background:none;padding:0;
+  font-family:inherit;font-size:inherit;text-align:left;
+}
+.pol-name-link:hover{opacity:.8;text-decoration:underline}
+td .pol-name-link{font-size:13px}
+
+/* ─── Animations ────────────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.6;transform:scale(.9)}50%{opacity:1;transform:scale(1)}}
+
+/* ─── Responsive ────────────────────────────────────────────── */
+@media(max-width:860px){
+  .sidebar{width:64px;min-width:64px;padding:16px 8px}
+  .brand-text,.nav-label,.sidebar-footer{display:none}
+  .nav-btn{justify-content:center;padding:12px}
+  .nav-icon{width:auto}
+  .content{padding:24px 16px 48px}
+  .trade-card{grid-template-columns:1fr 1fr;gap:12px}
+  .two-col{grid-template-columns:1fr}
+}
