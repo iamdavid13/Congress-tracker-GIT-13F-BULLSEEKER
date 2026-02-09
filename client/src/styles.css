@@ -253,7 +253,10 @@ tbody td{padding:12px;vertical-align:middle}
 /* ─── Avatar images ─────────────────────────────────────────── */
 .avatar-img{
   width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;
+  border:2px solid var(--surface-3);
 }
+.avatar-img.dem{border-color:var(--dem)}
+.avatar-img.rep{border-color:var(--rep)}
 .pol-row .avatar-img + .avatar{display:none}
 
 /* ─── Scrollbar ─────────────────────────────────────────────── */

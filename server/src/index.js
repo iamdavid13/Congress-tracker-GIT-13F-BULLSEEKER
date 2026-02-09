@@ -305,7 +305,7 @@ app.get("/api/stats", async (_req, res) => {
 // ─── Trades (curated dataset — swap for live when available) ─────
 app.get("/api/trades", (req, res) => {
   let list = [...fallbackTrades];
-  const { ticker, politician, type, chamber, limit = 150, offset = 0 } = req.query;
+  const { ticker, politician, type, chamber, limit = 400, offset = 0 } = req.query;
 
   if (ticker) list = list.filter(t => t.ticker.toLowerCase().includes(ticker.toLowerCase()));
   if (politician) list = list.filter(t => t.politician.toLowerCase().includes(politician.toLowerCase()));

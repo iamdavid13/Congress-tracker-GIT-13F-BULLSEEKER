@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getStats, getTrades } from "../api.js";
+import { getPolPhoto } from "../polPhotos.js";
 
 export default function Overview({ onPoliticianClick }) {
   const [stats, setStats] = useState(null);
@@ -7,7 +8,7 @@ export default function Overview({ onPoliticianClick }) {
 
   useEffect(() => {
     getStats().then(setStats).catch(() => {});
-    getTrades("limit=150").then(d => setTrades(d.trades || [])).catch(() => {});
+    getTrades("limit=400").then(d => setTrades(d.trades || [])).catch(() => {});
   }, []);
 
   return (
@@ -74,7 +75,18 @@ export default function Overview({ onPoliticianClick }) {
                   </td>
                   <td>
                     <div className="pol-cell">
-                      <div className={`avatar ${t.party === "D" ? "dem" : "rep"}`}>
+                      {getPolPhoto(t.politician) ? (
+                        <img
+                          src={getPolPhoto(t.politician)}
+                          alt={t.politician}
+                          className={`avatar-img ${t.party === "D" ? "dem" : "rep"}`}
+                          onError={e => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }}
+                        />
+                      ) : null}
+                      <div
+                        className={`avatar ${t.party === "D" ? "dem" : "rep"}`}
+                        style={getPolPhoto(t.politician) ? { display: "none" } : {}}
+                      >
                         {t.politician.split(" ").map(w => w[0]).join("").slice(0, 2)}
                       </div>
                       <div>
